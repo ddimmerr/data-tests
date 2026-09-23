@@ -1,1 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
 venv/
+env/
+
+# SQLMesh
+.cache/
+.sqlmesh/
+logs/
+
+# Environment variables / secrets
+.env
+.envrc
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Dagster
+.dagster_home/
+storage/
