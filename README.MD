@@ -1,20 +1,6 @@
 **Dagster + SQLMesh Local Setup**
 
 A local proof-of-concept pipeline combining SQLMesh (data transformation) and Dagster (orchestration), with SQLMesh exposed via a small HTTP API so the two can run as fully independent, separately deployable services.
-Project Structure
-
-data-tests/
-├── sqlmesh/
-│   ├── config.py
-│   ├── models/
-│   ├── api.py              # FastAPI wrapper exposing SQLMesh via HTTP
-│   ├── Dockerfile
-│   └── requirements.txt
-├── dagster/
-│   ├── definitions.py
-│   ├── Dockerfile
-│   └── requirements.txt
-└── README.md
 
 **Prerequisites**
 
@@ -22,37 +8,38 @@ Python 3.12 (required — newer/older versions have dependency conflicts with so
 Docker Desktop
 Google Cloud SDK (gcloud CLI)
 A GCP project with the BigQuery API enabled
-1. Authenticate with GCP
 
+1. Authenticate with GCP
 gcloud auth login
 gcloud auth application-default login --no-launch-browser
 gcloud config set project your-gcp-project-id
-2. Set up Python environment
 
+2. Set up Python environment
 python3.12 -m venv .venv
 source .venv/bin/activate
-3. Build and run the SQLMesh container
 
+3. Build and run the SQLMesh container
 cd sqlmesh
 docker build -t sqlmesh-project:latest .
 
 docker run --rm -p 8000:8000 \
   -v ~/.config/gcloud:/root/.config/gcloud \
   sqlmesh-project:latest
+
 Leave this running. Verify it's healthy in another terminal:
 curl http://localhost:8000/health
 curl -X POST http://localhost:8000/run-plan
 You should get back a JSON response with "success": true.
-4. Run Dagster locally
 
+4. Run Dagster locally
 In a new terminal, from the project root:
 cd data-tests
 source .venv/bin/activate
 pip install -r dagster/requirements.txt
 dagster dev -f dagster/definitions.py
 Open the Dagster UI at http://localhost:3000.
-5. Materialize the asset
 
+5. Materialize the asset
 Go to the Assets tab
 Select sqlmesh_test_model
 Click Materialize
