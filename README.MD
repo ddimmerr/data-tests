@@ -2,6 +2,10 @@
 
 A local proof-of-concept pipeline combining **SQLMesh** (data transformation) and **Dagster** (orchestration), with SQLMesh exposed via a small HTTP API so the two can run as fully independent, separately deployable services.
 
+>main *local* branch - **main_local** <br>
+
+>main *repo* branch - **main** <br>
+
 ## Prerequisites
 
 - **Python 3.12** (required — newer/older versions have dependency conflicts with some packages used here)
@@ -45,11 +49,12 @@ Open the Dagster UI at http://localhost:3000.
 Go to the Assets tab. \
 Select sqlmesh_test_model. \
 Click Materialize. \
-This triggers Dagster to call the SQLMesh container's /run-plan endpoint over HTTP, which runs sqlmesh plan dev --auto-apply and applies the model to BigQuery. \
+This triggers Dagster to call the SQLMesh container's /run-plan endpoint over HTTP, which runs sqlmesh plan dev --auto-apply and applies the model to BigQuery.
 
 # Notes
 
 SQLMesh and Dagster are fully decoupled — no shared filesystem or Python environment. Dagster only ever talks to SQLMesh over HTTP.
 Right now Dagster (running on your host machine) reaches the SQLMesh container via localhost:8000, since the container's port is mapped to your host. Once this setup moves to Docker Compose, the address will change to http://sqlmesh-service:8000, using Compose's internal service DNS instead.<br>
+
 
 Credentials are mounted from your local ~/.config/gcloud directory — no keys are baked into the image.
