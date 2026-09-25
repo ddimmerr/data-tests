@@ -43,7 +43,7 @@ Open the Dagster UI at http://localhost:3000.
 ## 5. Materialize the asset
 
 Go to the Assets tab. \
-Select sqlmesh_test_model. \ 
+Select sqlmesh_test_model. \
 Click Materialize. \
 This triggers Dagster to call the SQLMesh container's /run-plan endpoint over HTTP, which runs sqlmesh plan dev --auto-apply and applies the model to BigQuery. \
 
