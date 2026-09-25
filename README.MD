@@ -2,10 +2,6 @@
 
 A local proof-of-concept pipeline combining **SQLMesh** (data transformation) and **Dagster** (orchestration), with SQLMesh exposed via a small HTTP API so the two can run as fully independent, separately deployable services.
 
-## Project Structure
-
-data-tests/ ├── sqlmesh/ │ ├── config.py │ ├── models/ │ ├── api.py # FastAPI wrapper exposing SQLMesh via HTTP │ ├── Dockerfile │ └── requirements.txt ├── dagster/ │ ├── definitions.py │ ├── Dockerfile │ └── requirements.txt └── README.md
-
 ## Prerequisites
 
 - **Python 3.12** (required — newer/older versions have dependency conflicts with some packages used here)
@@ -19,6 +15,7 @@ data-tests/ ├── sqlmesh/ │ ├── config.py │ ├── models/ │
 gcloud auth login
 gcloud auth application-default login --no-launch-browser
 gcloud config set project your-gcp-project-id
+
 2. Set up Python environment
 
 python3.12 -m venv .venv
