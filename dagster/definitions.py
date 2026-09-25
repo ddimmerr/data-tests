@@ -3,7 +3,7 @@ from dagster import asset, Definitions
 
 @asset
 def sqlmesh_test_model():
-    response = requests.post("http://localhost:8000/run-plan")
+    response = requests.post("http://sqlmesh-service:8000/run-plan")
     data = response.json()
     if not data["success"]:
         raise Exception(f"SQLMesh failed: {data['stderr']}")

@@ -11,6 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 3000
+ENV DAGSTER_HOME=/app/dagster_home
+RUN mkdir -p $DAGSTER_HOME
 
-CMD ["dagster-webserver", "-h", "0.0.0.0", "-p", "3000", "-f", "definitions.py"]
+EXPOSE 3000

@@ -24,6 +24,9 @@ logs/
 
 # OS
 .DS_Store
+secrets/
+to-do
+
 
 # Dagster
 .dagster_home/

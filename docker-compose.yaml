@@ -1,0 +1,78 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: dagster
+      POSTGRES_PASSWORD: dagster
+      POSTGRES_DB: dagster
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dagster"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  sqlmesh-service:
+    build:
+      context: ./sqlmesh
+      dockerfile: Dockerfile
+    container_name: sqlmesh-service
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./sqlmesh:/app
+      - ./secrets/gcp-key.json:/app/gcp-key.json:ro
+    environment:
+      PYTHONUNBUFFERED: "1"
+      GOOGLE_APPLICATION_CREDENTIALS: /app/gcp-key.json
+
+  dagster-webserver:
+    build:
+      context: ./dagster
+      dockerfile: Dockerfile
+    container_name: dagster-webserver
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      sqlmesh-service:
+        condition: service_started
+    ports:
+      - "3000:3000"
+    environment:
+      DAGSTER_HOME: /opt/dagster/dagster_home
+      DAGSTER_PG_URL: postgresql+psycopg2://dagster:dagster@postgres:5432/dagster
+    volumes:
+      - ./dagster:/opt/dagster/app
+      - ./dagster/dagster_home:/opt/dagster/dagster_home
+    command: ["dagster-webserver", "-h", "0.0.0.0", "-p", "3000"]
+
+  dagster-daemon:
+    build:
+      context: ./dagster
+      dockerfile: Dockerfile
+    container_name: dagster-daemon
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      sqlmesh-service:
+        condition: service_started
+    environment:
+      DAGSTER_HOME: /opt/dagster/dagster_home
+      DAGSTER_PG_URL: postgresql+psycopg2://dagster:dagster@postgres:5432/dagster
+    volumes:
+      - ./dagster:/opt/dagster/app
+      - ./dagster/dagster_home:/opt/dagster/dagster_home
+    command: ["dagster-daemon", "run"]
+
+volumes:
+  postgres_data:
